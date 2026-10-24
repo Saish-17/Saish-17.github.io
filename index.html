@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SAISH CHANDROJI — Portfolio</title>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- FontAwesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<!-- GSAP -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+<style>
+/* ============================================================
+   DESIGN TOKENS
+   ============================================================ */
+:root {
+    /* Emerald + light-blue blend */
+    --accent-color:   #2ECC71;   /* emerald */
+    --accent-color-2: #56Cfe1;   /* light blue */
+    --accent-rgb:     46,204,113;
+
+    --bg:        #0a0a0a;
+    --bg-soft:   #141414;
+    --fg:        #f5f5f5;
+    --fg-dim:    #b0b0b0;
+    --border-clr: #f5f5f5;
+
+    --shadow-hard: 6px 6px 0 var(--fg);
+    --shadow-hard-accent: 6px 6px 0 var(--accent-color);
+    --shadow-press: 2px 2px 0 var(--accent-color);
+    --border-w: 3px;
+}
+
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+html { scroll-behavior:smooth; }
+
+body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'Space Mono', monospace;
+    line-height: 1.6;
+    overflow-x: hidden;
+    cursor: none !important;
+}
+
+a, button { cursor: none !important; }
+
+::selection {
+    background: var(--accent-color);
+    color: #000;
+}
+::-moz-selection {
+    background: var(--accent-color);
+    color: #000;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--accent-color); border: 2px solid var(--fg); }
+
+/* ============================================================
+   CUSTOM CURSOR
+   ============================================================ */
+.cursor-dot {
+    position: fixed;
+    top: 0; left: 0;
+    width: 14px; height: 14px;
+    background: var(--accent-color);
+    border: 2px solid var(--fg);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 99999;
+    transform: translate(-50%, -50%);
+    transition: width .2s ease, height .2s ease, background .2s ease, border-radius .2s ease;
+    mix-blend-mode: difference;
+}
+
+.cursor-dot.hovering {
+    width: 44px; height: 44px;
+    background: transparent;
+    border-color: var(--accent-color-2);
+    border-radius: 50%;
+}
+
+.cursor-dot.clicking {
+    width: 24px; height: 24px;
+    background: var(--accent-color-2);
+}
+
+/* ============================================================
+   NAVBAR
+   ============================================================ */
+.navbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 68px;
+    background: var(--fg);
+    color: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    z-index: 1000;
+    border-bottom: var(--border-w) solid var(--bg);
+}
+
+.nav-brand {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 1.3rem;
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.nav-brand .accent-dot {
+    width: 12px; height: 12px;
+    background: var(--accent-color);
+    border-radius: 50%;
+    display: inline-block;
+    border: 2px solid var(--bg);
+}
+
+.nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+    align-items: center;
+}
+
+.nav-links a {
+    color: var(--bg);
+    text-decoration: none;
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+    padding-bottom: 4px;
+}
+
+.nav-links a::after {
+    content: '';
+    position: absolute;
+    left: 0; bottom: 0;
+    width: 0; height: 2px;
+    background: var(--accent-color);
+    transition: width .25s ease;
+}
+.nav-links a:hover::after { width: 100%; }
+
+.nav-links .nav-cta {
+    background: var(--bg);
+    color: var(--fg);
+    padding: 0.5rem 1rem;
+    border: var(--border-w) solid var(--bg);
+    box-shadow: 3px 3px 0 var(--accent-color);
+    transition: transform .12s ease, box-shadow .12s ease;
+}
+.nav-links .nav-cta:hover {
+    transform: translate(2px,2px);
+    box-shadow: 1px 1px 0 var(--accent-color);
+}
+.nav-links .nav-cta::after { display:none; }
+
+.hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    padding: 6px;
+}
+.hamburger span {
+    width: 26px; height: 3px;
+    background: var(--bg);
+    transition: .3s;
+}
+.hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(6px,6px); }
+.hamburger.open span:nth-child(2) { opacity:0; }
+.hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(6px,-6px); }
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 100px 2rem 4rem;
+    overflow: hidden;
+}
+
+/* Diagonal hatch pattern */
+.hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(
+        45deg,
+        transparent 0,
+        transparent 12px,
+        rgba(245,245,245,0.03) 12px,
+        rgba(245,245,245,0.03) 13px
+    );
+    pointer-events: none;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    max-width: 900px;
+}
+
+.hero-badge {
+    display: inline-block;
+    background: var(--accent-color);
+    color: #000;
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    padding: 0.4rem 1.2rem;
+    border: var(--border-w) solid var(--fg);
+    box-shadow: var(--shadow-hard);
+    margin-bottom: 1.5rem;
+}
+
+.hero-name {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: clamp(2.4rem, 10vw, 7rem);
+    line-height: 0.95;
+    letter-spacing: -2px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+    word-break: keep-all;
+}
+
+.hero-name .word {
+    display: inline-block;
+    white-space: nowrap;
+    margin-right: 0.25em;
+}
+
+.hero-name .letter {
+    display: inline-block;
+    transform: translateY(120%);
+}
+
+.hero-tag {
+    font-size: clamp(0.95rem, 2vw, 1.25rem);
+    color: var(--fg-dim);
+    margin-bottom: 2.5rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    opacity: 0;
+}
+
+.hero-tag span {
+    color: var(--accent-color-2);
+    font-weight: 700;
+}
+
+.hero-cta-group {
+    display: flex;
+    gap: 1.2rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    opacity: 0;
+}
+
+/* ============================================================
+   BUTTONS (Brutalist)
+   ============================================================ */
+.btn {
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    text-decoration: none;
+    padding: 0.85rem 1.8rem;
+    border: var(--border-w) solid var(--fg);
+    background: var(--bg);
+    color: var(--fg);
+    box-shadow: var(--shadow-hard);
+    transition: transform .12s ease, box-shadow .12s ease, background .15s ease, color .15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+.btn:hover {
+    transform: translate(3px,3px);
+    box-shadow: var(--shadow-press);
+}
+.btn:active {
+    transform: translate(6px,6px);
+    box-shadow: none;
+}
+
+.btn-accent {
+    background: var(--accent-color);
+    color: #000;
+    border-color: var(--fg);
+    box-shadow: var(--shadow-hard);
+}
+.btn-accent:hover {
+    box-shadow: 3px 3px 0 var(--accent-color-2);
+}
+
+/* ============================================================
+   SECTION GENERIC
+   ============================================================ */
+.section {
+    padding: 6rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.section-title {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    text-transform: uppercase;
+    letter-spacing: -1px;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+}
+.section-title::before {
+    content: '//';
+    color: var(--accent-color);
+}
+
+.section-subtitle {
+    color: var(--fg-dim);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 3rem;
+}
+
+/* ============================================================
+   ABOUT / BIO
+   ============================================================ */
+.about-card {
+    background: var(--bg-soft);
+    border: var(--border-w) solid var(--fg);
+    box-shadow: var(--shadow-hard-accent);
+    padding: 2.5rem;
+    font-size: 1.05rem;
+    line-height: 1.8;
+}
+
+.about-card .bio-quote {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 1.3rem;
+    color: var(--accent-color-2);
+    margin-bottom: 1rem;
+    line-height: 1.4;
+}
+
+.about-card .bio-text { color: var(--fg-dim); }
+.about-card .bio-text strong { color: var(--fg); }
+
+/* ============================================================
+   GITHUB PROFILE BAR
+   ============================================================ */
+.gh-profile {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    background: var(--fg);
+    color: var(--bg);
+    border: var(--border-w) solid var(--fg);
+    box-shadow: var(--shadow-hard-accent);
+    padding: 1.5rem 2rem;
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+}
+
+.gh-avatar {
+    width: 80px; height: 80px;
+    border: var(--border-w) solid var(--bg);
+    box-shadow: 3px 3px 0 var(--accent-color);
+    object-fit: cover;
+    flex-shrink: 0;
+    background: #ddd;
+}
+
+.gh-identity { flex: 1; min-width: 200px; }
+.gh-identity .gh-name {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 1.5rem;
+    line-height: 1;
+}
+.gh-identity .gh-handle {
+    font-size: 0.9rem;
+    color: #555;
+    margin-top: 4px;
+}
+
+.gh-stats {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+.gh-stat {
+    text-align: center;
+    min-width: 70px;
+}
+.gh-stat .num {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 1.8rem;
+    color: var(--accent-color);
+    line-height: 1;
+}
+.gh-stat .lbl {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #666;
+    margin-top: 4px;
+}
+
+/* ============================================================
+   PROJECT CARDS
+   ============================================================ */
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+    gap: 2rem;
+}
+
+.project-card {
+    background: var(--bg-soft);
+    border: var(--border-w) solid var(--fg);
+    box-shadow: var(--shadow-hard);
+    padding: 1.8rem;
+    transition: box-shadow .15s ease, transform .1s ease;
+    transform-style: preserve-3d;
+    will-change: transform;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    opacity: 0;
+}
+
+.project-card .pc-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.project-card .pc-title {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 1.25rem;
+    line-height: 1.2;
+    word-break: break-word;
+}
+
+.project-card .pc-stars {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--accent-color-2);
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.project-card .pc-desc {
+    color: var(--fg-dim);
+    font-size: 0.92rem;
+    flex: 1;
+}
+
+.project-card .pc-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 2px dashed rgba(245,245,245,0.2);
+}
+
+.lang-badge {
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background: var(--accent-color);
+    color: #000;
+    padding: 0.3rem 0.7rem;
+    border: 2px solid var(--fg);
+    box-shadow: 2px 2px 0 var(--bg);
+}
+
+.pc-link {
+    color: var(--fg);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: color .15s ease;
+}
+.pc-link:hover { color: var(--accent-color-2); }
+.pc-link i { transition: transform .15s ease; }
+.pc-link:hover i { transform: translateX(4px); }
+
+/* ============================================================
+   CONTACT
+   ============================================================ */
+.contact {
+    background: var(--fg);
+    color: var(--bg);
+    margin-top: 4rem;
+}
+.contact .section-title { color: var(--bg); }
+.contact .section-title::before { color: var(--accent-color); }
+.contact .section-subtitle { color: #666; }
+
+.contact-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 6rem 2rem;
+}
+
+.contact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.contact-card {
+    background: var(--bg);
+    color: var(--fg);
+    border: var(--border-w) solid var(--bg);
+    box-shadow: 4px 4px 0 var(--accent-color);
+    padding: 1.8rem;
+    text-decoration: none;
+    color: var(--fg);
+    transition: transform .12s ease, box-shadow .12s ease;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+.contact-card:hover {
+    transform: translate(3px,3px);
+    box-shadow: 1px 1px 0 var(--accent-color);
+}
+.contact-card i { font-size: 1.8rem; color: var(--accent-color); }
+.contact-card .cc-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--fg-dim);
+}
+.contact-card .cc-value {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 1rem;
+    word-break: break-all;
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.footer {
+    background: var(--bg);
+    border-top: var(--border-w) solid var(--fg);
+    padding: 2rem;
+    text-align: center;
+    color: var(--fg-dim);
+    font-size: 0.85rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.footer .ft-social {
+    display: flex;
+    gap: 1rem;
+}
+.footer .ft-social a {
+    color: var(--fg);
+    font-size: 1.2rem;
+    border: 2px solid var(--fg);
+    width: 40px; height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 2px 2px 0 var(--accent-color);
+    transition: transform .12s ease, box-shadow .12s ease;
+}
+.footer .ft-social a:hover {
+    transform: translate(2px,2px);
+    box-shadow: none;
+}
+
+/* ============================================================
+   BACK TO TOP
+   ============================================================ */
+.top-btn {
+    position: fixed;
+    bottom: 2rem; right: 2rem;
+    width: 56px; height: 56px;
+    background: var(--accent-color);
+    color: #000;
+    border: var(--border-w) solid var(--fg);
+    box-shadow: var(--shadow-hard);
+    font-size: 1.3rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 900;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .3s ease, transform .12s ease, box-shadow .12s ease;
+}
+.top-btn.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+.top-btn:hover {
+    transform: translate(2px,2px);
+    box-shadow: 2px 2px 0 var(--accent-color-2);
+}
+
+/* ============================================================
+   LOADING / ERROR STATES
+   ============================================================ */
+.loading-card, .error-card {
+    padding: 2rem;
+    border: var(--border-w) solid var(--fg);
+    box-shadow: var(--shadow-hard);
+    background: var(--bg-soft);
+    text-align: center;
+    color: var(--fg-dim);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.error-card { color: var(--accent-color-2); border-color: var(--accent-color-2); }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 820px) {
+    .hamburger { display: flex; }
+    .nav-links {
+        position: fixed;
+        top: 68px; left: 0; right: 0;
+        background: var(--fg);
+        flex-direction: column;
+        padding: 2rem;
+        gap: 1.5rem;
+        border-bottom: var(--border-w) solid var(--bg);
+        transform: translateY(-150%);
+        transition: transform .35s ease;
+    }
+    .nav-links.open { transform: translateY(0); }
+    .nav-links .nav-cta { width: 100%; text-align: center; }
+}
+
+@media (max-width: 600px) {
+    .hero { padding: 100px 1.2rem 3rem; }
+    .section { padding: 4rem 1.2rem; }
+    .contact-inner { padding: 4rem 1.2rem; }
+    .gh-profile { flex-direction: column; text-align: center; align-items: center; }
+    .gh-stats { justify-content: center; }
+    .projects-grid { grid-template-columns: 1fr; }
+    .footer { flex-direction: column; text-align: center; }
+    .top-btn { bottom: 1rem; right: 1rem; width: 48px; height: 48px; }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+    .hero-name .letter { transform: none !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     CUSTOM CURSOR
+     ============================================================ -->
+<div class="cursor-dot" id="cursorDot"></div>
+
+<!-- ============================================================
+     NAVBAR
+     ============================================================ -->
+<nav class="navbar">
+    <div class="nav-brand">
+        <span class="accent-dot"></span>
+        SAISH.C
+    </div>
+    <ul class="nav-links" id="navLinks">
+        <li><a href="#about">About</a></li>
+        <li><a href="#work">Work</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li><a href="https://github.com/Saish-17" target="_blank" rel="noopener" class="nav-cta">GitHub <i class="fa-brands fa-github"></i></a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+    </button>
+</nav>
+
+<!-- ============================================================
+     HERO
+     ============================================================ -->
+<header class="hero" id="top">
+    <div class="hero-content">
+        <div class="hero-badge">COMPUTER ENGINEERING STUDENT</div>
+        <h1 class="hero-name" id="heroName">SAISH CHANDROJI</h1>
+        <p class="hero-tag" id="heroTag">
+            I build. Deconstruct. Refine. Repeat. <br>
+            <span>If it exists, break it down. If it doesn't, build it from scratch.</span>
+        </p>
+        <div class="hero-cta-group" id="heroCta">
+            <a href="#work" class="btn btn-accent">View Work <i class="fa-solid fa-arrow-down"></i></a>
+            <a href="#contact" class="btn">Get In Touch <i class="fa-solid fa-envelope"></i></a>
+        </div>
+    </div>
+</header>
+
+<!-- ============================================================
+     ABOUT / BIO
+     ============================================================ -->
+<section class="section" id="about">
+    <h2 class="section-title">About</h2>
+    <p class="section-subtitle">// who am i</p>
+    <div class="about-card">
+        <p class="bio-quote">"Turning abstract ideas into scalable code."</p>
+        <p class="bio-text">
+            Hi, I'm <strong>Saish Chandroji</strong> — a Computer Engineering Student who loves turning abstract ideas into scalable code. My approach is simple: <strong>Build. Deconstruct. Refine. Repeat.</strong> If it exists, I break it down to see how it works. If it doesn't exist, I build it from scratch. I'm always exploring new technologies, pushing boundaries, and shipping things that matter.
+        </p>
+    </div>
+</section>
+
+<!-- ============================================================
+     GITHUB PROFILE + PROJECTS
+     ============================================================ -->
+<section class="section" id="work">
+    <h2 class="section-title">Work</h2>
+    <p class="section-subtitle">// pulled live from github</p>
+
+    <!-- Profile bar -->
+    <div class="gh-profile" id="ghProfile">
+        <img class="gh-avatar" id="ghAvatar" src="" alt="GitHub avatar" />
+        <div class="gh-identity">
+            <div class="gh-name" id="ghName">Loading…</div>
+            <div class="gh-handle" id="ghHandle">@Saish-17</div>
+        </div>
+        <div class="gh-stats">
+            <div class="gh-stat"><div class="num" id="ghRepos">—</div><div class="lbl">Repos</div></div>
+            <div class="gh-stat"><div class="num" id="ghFollowers">—</div><div class="lbl">Followers</div></div>
+            <div class="gh-stat"><div class="num" id="ghStars">—</div><div class="lbl">Stars</div></div>
+        </div>
+    </div>
+
+    <!-- Projects grid -->
+    <div class="projects-grid" id="projectsGrid">
+        <div class="loading-card">FETCHING REPOSITORIES…</div>
+    </div>
+</section>
+
+<!-- ============================================================
+     CONTACT
+     ============================================================ -->
+<section class="contact" id="contact">
+    <div class="contact-inner">
+        <h2 class="section-title">Contact</h2>
+        <p class="section-subtitle">// let's build something</p>
+        <div class="contact-grid">
+            <a href="https://github.com/Saish-17" target="_blank" rel="noopener" class="contact-card">
+                <i class="fa-brands fa-github"></i>
+                <div>
+                    <div class="cc-label">GitHub</div>
+                    <div class="cc-value">@Saish-17</div>
+                </div>
+            </a>
+            <a href="https://www.linkedin.com/in/saish-chandroji-685721309" target="_blank" rel="noopener" class="contact-card">
+                <i class="fa-brands fa-linkedin"></i>
+                <div>
+                    <div class="cc-label">LinkedIn</div>
+                    <div class="cc-value">Saish Chandroji</div>
+                </div>
+            </a>
+            <a href="mailto:saish@example.com" class="contact-card" id="emailCard">
+                <i class="fa-solid fa-envelope"></i>
+                <div>
+                    <div class="cc-label">Email</div>
+                    <div class="cc-value">Say Hello</div>
+                </div>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================
+     FOOTER
+     ============================================================ -->
+<footer class="footer">
+    <span>&copy; <span id="year"></span> SAISH CHANDROJI · BUILT WITH BRUTALIST INTENT</span>
+    <div class="ft-social">
+        <a href="https://github.com/Saish-17" target="_blank" rel="noopener" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+        <a href="https://www.linkedin.com/in/saish-chandroji-685721309" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+        <a href="#top" aria-label="Back to top"><i class="fa-solid fa-arrow-up"></i></a>
+    </div>
+</footer>
+
+<!-- Back to top button -->
+<button class="top-btn" id="topBtn" aria-label="Back to top">↑</button>
+
+<!-- ============================================================
+     SCRIPTS
+     ============================================================ -->
+<script>
+/* ============================================================
+   CONFIG — hardcoded details
+   ============================================================ */
+const GITHUB_USERNAME = "Saish-17";
+const LINKEDIN_URL    = "https://www.linkedin.com/in/saish-chandroji-685721309";
+
+/* ============================================================
+   1. CUSTOM CURSOR
+   ============================================================ */
+(function initCursor() {
+    const dot = document.getElementById('cursorDot');
+    let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+    let dotX = mouseX, dotY = mouseY;
+
+    document.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+    });
+
+    function animate() {
+        // smooth follow
+        dotX += (mouseX - dotX) * 0.25;
+        dotY += (mouseY - dotY) * 0.25;
+        dot.style.left = dotX + 'px';
+        dot.style.top  = dotY + 'px';
+        requestAnimationFrame(animate);
+    }
+    animate();
+
+    // hover morph on clickable elements
+    const hoverables = 'a, button, .project-card, .contact-card, .nav-cta, .btn, .top-btn, .ft-social a';
+    document.addEventListener('mouseover', (e) => {
+        if (e.target.closest(hoverables)) dot.classList.add('hovering');
+    });
+    document.addEventListener('mouseout', (e) => {
+        if (e.target.closest(hoverables) && !e.relatedTarget?.closest(hoverables)) {
+            dot.classList.remove('hovering');
+        }
+    });
+
+    // click pop
+    document.addEventListener('mousedown', () => dot.classList.add('clicking'));
+    document.addEventListener('mouseup',   () => dot.classList.remove('clicking'));
+
+    // hide when leaving window
+    document.addEventListener('mouseleave', () => dot.style.opacity = '0');
+    document.addEventListener('mouseenter', () => dot.style.opacity = '1');
+})();
+
+/* ============================================================
+   2. MOBILE HAMBURGER MENU
+   ============================================================ */
+(function initHamburger() {
+    const ham  = document.getElementById('hamburger');
+    const links = document.getElementById('navLinks');
+    ham.addEventListener('click', () => {
+        ham.classList.toggle('open');
+        links.classList.toggle('open');
+    });
+    // close on link click
+    links.querySelectorAll('a').forEach(a => {
+        a.addEventListener('click', () => {
+            ham.classList.remove('open');
+            links.classList.remove('open');
+        });
+    });
+})();
+
+/* ============================================================
+   3. HERO NAME — split into letters for GSAP reveal
+   ============================================================ */
+(function splitHeroName() {
+    const el = document.getElementById('heroName');
+    const text = el.textContent.trim();
+    el.innerHTML = '';
+    // Split by word so a word can never break across lines
+    text.split(' ').forEach((word, wi) => {
+        const wordSpan = document.createElement('span');
+        wordSpan.className = 'word';
+        word.split('').forEach(ch => {
+            const span = document.createElement('span');
+            span.className = 'letter';
+            span.textContent = ch;
+            wordSpan.appendChild(span);
+        });
+        el.appendChild(wordSpan);
+    });
+})();
+
+/* ============================================================
+   4. GSAP HERO ENTRANCE
+   ============================================================ */
+window.addEventListener('load', () => {
+    gsap.registerPlugin(ScrollTrigger);
+
+    const tl = gsap.timeline();
+    tl.to('.hero-badge', { opacity: 1, y: 0, duration: 0.5, from: { y: -20, opacity: 0 } })
+      .to('.hero-name .letter', {
+          y: '0%',
+          duration: 0.8,
+          stagger: 0.04,
+          ease: 'power4.out'
+      }, '-=0.2')
+      .to('#heroTag', { opacity: 1, y: 0, duration: 0.6, from: { y: 20, opacity: 0 } }, '-=0.4')
+      .to('#heroCta', { opacity: 1, y: 0, duration: 0.5, from: { y: 20, opacity: 0 } }, '-=0.3');
+
+    // Badge needs to start visible for the "from" to work
+    gsap.set('.hero-badge', { opacity: 1 });
+
+    // Scroll-triggered reveals
+    gsap.utils.toArray('.section-title').forEach(title => {
+        gsap.from(title, {
+            scrollTrigger: { trigger: title, start: 'top 85%' },
+            x: -40, opacity: 0, duration: 0.7, ease: 'power3.out'
+        });
+    });
+
+    gsap.utils.toArray('.about-card').forEach(card => {
+        gsap.from(card, {
+            scrollTrigger: { trigger: card, start: 'top 85%' },
+            y: 50, opacity: 0, duration: 0.7, ease: 'power3.out'
+        });
+    });
+
+    gsap.from('.gh-profile', {
+        scrollTrigger: { trigger: '.gh-profile', start: 'top 88%' },
+        y: 50, opacity: 0, duration: 0.7, ease: 'power3.out'
+    });
+});
+
+/* ============================================================
+   5. SCROLL REVEAL FOR PROJECT CARDS (Intersection Observer)
+   ============================================================ */
+function revealProjectCards() {
+    const cards = document.querySelectorAll('.project-card');
+    const io = new IntersectionObserver((entries) => {
+        entries.forEach((entry, i) => {
+            if (entry.isIntersecting) {
+                setTimeout(() => {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                    entry.target.style.transition = 'opacity .5s ease, transform .5s ease';
+                }, i * 80);
+                io.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.15 });
+
+    cards.forEach(c => {
+        c.style.opacity = '0';
+        c.style.transform = 'translateY(40px)';
+        io.observe(c);
+    });
+}
+
+/* ============================================================
+   6. 3D TILT ON PROJECT CARDS
+   ============================================================ */
+function initTilt() {
+    document.querySelectorAll('.project-card').forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const cx = rect.width / 2;
+            const cy = rect.height / 2;
+            const rotateX = ((y - cy) / cy) * -8;
+            const rotateY = ((x - cx) / cx) * 8;
+            card.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(0)`;
+        });
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = 'perspective(800px) rotateX(0) rotateY(0)';
+        });
+    });
+}
+
+/* ============================================================
+   7. GITHUB API FETCH
+   ============================================================ */
+async function fetchGitHub() {
+    const profileUrl = `https://api.github.com/users/${GITHUB_USERNAME}`;
+    const reposUrl   = `https://api.github.com/users/${GITHUB_USERNAME}/repos?per_page=100&sort=updated`;
+
+    try {
+        const [profileRes, reposRes] = await Promise.all([
+            fetch(profileUrl),
+            fetch(reposUrl)
+        ]);
+
+        if (!profileRes.ok) throw new Error(`GitHub profile fetch failed: ${profileRes.status}`);
+        if (!reposRes.ok)   throw new Error(`GitHub repos fetch failed: ${reposRes.status}`);
+
+        const profile = await profileRes.json();
+        const repos   = await reposRes.json();
+
+        /* ---- Profile bar ---- */
+        document.getElementById('ghAvatar').src = profile.avatar_url;
+        document.getElementById('ghName').textContent  = profile.name || profile.login;
+        document.getElementById('ghHandle').textContent = '@' + profile.login;
+        document.getElementById('ghRepos').textContent     = profile.public_repos ?? 0;
+        document.getElementById('ghFollowers').textContent = profile.followers ?? 0;
+
+        /* ---- Sort repos by stars (desc), take top 6 ---- */
+        const withStars = await Promise.all(repos.map(async (r) => {
+            let stars = r.stargazers_count || 0;
+            return { ...r, _stars: stars };
+        }));
+        withStars.sort((a, b) => b._stars - a._stars);
+        const topRepos = withStars.slice(0, 6);
+
+        // total stars across all fetched repos
+        const totalStars = withStars.reduce((sum, r) => sum + r._stars, 0);
+        document.getElementById('ghStars').textContent = totalStars;
+
+        /* ---- Render project cards ---- */
+        const grid = document.getElementById('projectsGrid');
+
+        if (topRepos.length === 0) {
+            grid.innerHTML = '<div class="loading-card">NO PUBLIC REPOSITORIES FOUND</div>';
+            return;
+        }
+
+        grid.innerHTML = topRepos.map(repo => {
+            const lang = repo.language || 'CODE';
+            const desc = repo.description ? repo.description : 'No description provided.';
+            const stars = repo._stars;
+            return `
+                <div class="project-card">
+                    <div class="pc-head">
+                        <h3 class="pc-title">${escapeHtml(repo.name)}</h3>
+                        <span class="pc-stars"><i class="fa-solid fa-star"></i> ${stars}</span>
+                    </div>
+                    <p class="pc-desc">${escapeHtml(desc)}</p>
+                    <div class="pc-foot">
+                        <span class="lang-badge">${escapeHtml(lang)}</span>
+                        <a href="${repo.html_url}" target="_blank" rel="noopener" class="pc-link">View <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        /* ---- Init tilt + scroll reveal on newly created cards ---- */
+        initTilt();
+        revealProjectCards();
+
+    } catch (err) {
+        console.error(err);
+        const grid = document.getElementById('projectsGrid');
+        grid.innerHTML = `<div class="error-card">⚠ GITHUB FETCH FAILED — ${escapeHtml(err.message)}<br><small>Rate limit may have been hit. Refresh later.</small></div>`;
+    }
+}
+
+function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+}
+
+/* ============================================================
+   8. BACK TO TOP BUTTON
+   ============================================================ */
+(function initTopBtn() {
+    const btn = document.getElementById('topBtn');
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 400) btn.classList.add('visible');
+        else btn.classList.remove('visible');
+    });
+    btn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+})();
+
+/* ============================================================
+   9. FOOTER YEAR
+   ============================================================ */
+document.getElementById('year').textContent = new Date().getFullYear();
+
+/* ============================================================
+   10. KICK OFF
+   ============================================================ */
+fetchGitHub();
+</script>
+</body>
+</html>
